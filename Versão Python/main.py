@@ -56,11 +56,11 @@ def run_complex(echlr, total, time, nprocs, block=2, quantum=2, maximo=100, chan
 
     bloqueados = []
     nprocs_aux = nprocs + 1
-    while (tempo < maximo):
+    while (time < maximo):
 
-        if (tempo < maximo and random.randint(1, 100) < chance_new):
+        if (time < maximo and random.randint(1, 100) < chance_new):
             p = Processo('P' + str(nprocs_aux), random.randint(1, chance_io),
-                         random.randint(minTime, maxTime), 0, tempo, 8)
+                         random.randint(minTime, maxTime), 0, time, 8)
             echlr.pronto(p, born=True)
             nprocs_aux += 1
         p = echlr.proximo()
@@ -74,10 +74,10 @@ def run_complex(echlr, total, time, nprocs, block=2, quantum=2, maximo=100, chan
                 echlr.pronto(p)
 
             total - rodou
-            tempo += rodou
+            time += rodou
 
         else:
-            tempo += 1
+            time += 1
 
         i = 0
         lim = len(bloqueados)
@@ -107,7 +107,7 @@ def make_process_list(amount, total=None, sizes=[], io_chance=[], size=10, io=0,
     random_size: Indica o uso de tamanhos de processos de forma randomizada, se True
     descarta ambos lista de tamanhos e tamanho padrão;
     random_io: Indica o uso de chances de I/O de processos de forma randomizada, se True
-    descarta ambos lista de I/O e I/O padrão;
+    descarta ambos lista de I/O;
     total_tickets: Quantidade de bilhetes totais de uma lista de processos;
     big_constant: Um número constante que é usado para se obter o stride de um processo (quando necessário);
     ticket: Indica o uso do sistema de bilhetes para a lista de processos;
@@ -120,10 +120,24 @@ def make_process_list(amount, total=None, sizes=[], io_chance=[], size=10, io=0,
 
     # Lida com o tamanho dos processos;
     # Se o parâmetro 'random_size' é True então será gerado um array de tamanhos aleatórios
-    # Em um range que vai de 3 até 'size', se 'size' é 0 ou None, o número 10 é usado como padrão (Nenhuma exception é levantada).;
-    if (random_size == True):
-        sizes = np.random.randint(
-            3, high=10 if size is None or size == 0 else size, size=amount)
+    # Em um range que vai de 3 até 'size';
+
+    if (not isinstance(amount, int) or amount <= 0):
+        raise TypeError(
+            "O parâmetro 'amount' precisa ser um inteiro positivo maior do que 0.")
+
+    if (not isinstance(io, int) or io < 0):
+        raise TypeError("O parâmetro 'io' precisa ser um inteiro positivo.")
+
+    if (not isinstance(size, int) or size < 3):
+        raise TypeError(
+            "O parâmetro 'size' precisa ser um inteiro positivo maior ou igual a 3.")
+
+    if (not isinstance(random_size, bool)):
+        raise TypeError(
+            "O parâmetro 'random_size' precisa ser um valor booleano True/False.")
+    elif (random_size == True):
+        sizes = np.random.randint(3, high=size, size=amount)
     elif (isinstance(sizes, np.ndarray)):
         if (sizes.length == 0):
             sizes = np.array([size] * amount)
@@ -134,6 +148,9 @@ def make_process_list(amount, total=None, sizes=[], io_chance=[], size=10, io=0,
             sizes = np.array(sizes)
 
     # Lida com as chances de I/O dos processos;
+    if (not isinstance(random_io, bool)):
+        raise TypeError(
+            "O parâmetro 'random_io' precisa ser um valor booleano True/False.")
     if (random_io == True):
         io_chance = np.random.randint(100, size=amount)
     elif (isinstance(io_chance, np.ndarray)):
@@ -150,7 +167,10 @@ def make_process_list(amount, total=None, sizes=[], io_chance=[], size=10, io=0,
     # Essa variável não é passada para nenhum processo;
     # Para previnir que um processo fique com a quantidade máxima de bilhetes disponíveis,
     # Um processo só pode ficar com no máximo 75% da quantidade total de bilhetes disponíveis.
-    if (ticket == False):
+    if (not isinstance(ticket, bool)):
+        raise TypeError(
+            "O parâmetro 'ticket' precisa ser um valor booleano True/False.")
+    elif (ticket == False):
         tickets = [0] * amount
     elif (random_tickets == True):
         if (total_tickets is not None):
@@ -164,14 +184,10 @@ def make_process_list(amount, total=None, sizes=[], io_chance=[], size=10, io=0,
                 else:
                     raise ValueError(
                         "A quantidade de bilhetes total não foi suficiente para gerar bilhetes para todos os processos.")
-
-        elif (total_tickets == 0):
-            raise ValueError(
-                "Ao se gerar bilhetes aleatoriamente a quantidade total de bilhetes disponível não pode ser 0.")
         else:
             raise TypeError(
                 "Ao se gerar bilhetes aleatoriamente a quantidade total de bilhetes disponível não pode ser indefinida.")
-    elif (isinstance(tickets, np.ndarray)):
+    elif (not isinstance(tickets, list)):
         raise TypeError("Para a lista de tickets, passe uma lista do python.")
     elif (not tickets):
         raise ValueError(
@@ -190,15 +206,15 @@ def make_process_list(amount, total=None, sizes=[], io_chance=[], size=10, io=0,
             total_size = total
         else:
             raise TypeError(
-                "O parâmetro 'total' precisa ser um inteiro positivo diferente de 0.")
+                "O parâmetro 'total' precisa ser um inteiro positivo maior do que 0.")
 
     # Para separar os strides dos processos, divide-se o big_constant pela quantidade de bilhetes atribuídas àquele processo.
     # Entretanto, se a quantidade total de bilhetes disponíveis for maior do que a big_constant, é garantido que um processo
     # Qualquer recebeu uma quantidade de tickets menor do que big_constant e, por tanto, a divisão do jeito que está implementada
     # Daria 0. Mesmo com essa verificação aqui, é necessário verificar novamente dentro de Process.
     if (ticket == True):
-        if (big_constant is None or big_constant <= 0):
-            raise ValueError("")
+        if (not isinstance(big_constant, int) or big_constant <= 0):
+            raise ValueError("O parâmetro 'big_constant' precisa ser um inteiro positivo maior do que 0.")
         if (total_tickets >= big_constant):
             raise ValueError(
                 "O parâmetro 'big_constant' precisa ser maior do que a quantidade total de bilhetes disponíveis.")
