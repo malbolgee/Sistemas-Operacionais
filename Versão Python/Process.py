@@ -17,7 +17,7 @@ class Processo(object):
         self.name = name
         self.io = io
         self.size = size
-        self.prio = 0
+        self.prio = prio
         self.arrival = arrival
         # TODO: Ajeitar essa condição.
         try:
@@ -41,3 +41,6 @@ class Processo(object):
 
     def __lt__(self, other):
         return self.prio < other.prio
+
+    def __str__(self):
+        return "Name: " + self.name + ", Size: " + str(self.size)
