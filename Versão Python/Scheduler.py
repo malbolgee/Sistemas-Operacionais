@@ -10,10 +10,13 @@ class Scheduler(object):
     def __init__(self, vprontos=[]):
         self.prontos = vprontos
 
-    def pronto(self, Processo):
+    def pronto(self, Processo, io=False, born=False):
         self.prontos.append(Processo)
 
-    def io_blocked(self, Processo):
+    def io_blocked(self, Processo, io=False, born=False):
+        pass
+
+    def io_blocked_add(self, Process, block_time):
         pass
 
     def proximo(self):
@@ -22,19 +25,19 @@ class Scheduler(object):
 
 class MLFQ(Scheduler):
     """  Recebe uma lista de processo inicial e inicializa uma lista de filas
-         que representam diferentes níveis de prioridade para o escalonador.
-         Essa lista inicialmente é colocada no mais alto nível de prioridade.
+    que representam diferentes níveis de prioridade para o escalonador.
+    Essa lista inicialmente é colocada no mais alto nível de prioridade.
 
-         lines: Quantidade de filas que o escalonador vai ter;
-         boost: De quanto em quanto tempo o escalonador vai dar um boost;
-         quamtum_lines: o quantum de cada fila;"""
+    lines: Quantidade de filas que o escalonador vai ter;
+    boost: De quanto em quanto tempo o escalonador vai dar um boost;
+    quamtum_lines: o quantum de cada fila;"""
 
     def __init__(self, vprontos=[], lines=7, boost=50, quantum_lines=None):
         super().__init__(vprontos)
-        self.nome = "EscalonadorMLFQ"
+        self.name = "EscalonadorMLFQ"
         self.filas = []
         self.boost = boost
-        self.auxboost = boost
+        self._auxboost = boost
         self.lines = lines
         self.quantum = quantum_lines
         self.filas.append(vprontos)
@@ -45,8 +48,8 @@ class MLFQ(Scheduler):
     def pronto(self, Processo, io=False, born=False):
         """ Adiciona um processo pronto à fila de processos de prioridade adequada.
 
-            io: Indica se um processo está saindo de I/O;
-            born: Indica se um processo acabou de ser criado;"""
+        io: Indica se um processo está saindo de I/O;
+        born: Indica se um processo acabou de ser criado;"""
         if (born == True):
             self.filas[0].append(Processo)
             return
@@ -58,8 +61,8 @@ class MLFQ(Scheduler):
 
     def proximo(self):
         """ Procura nas filas de prioridade um processo pronto.
-            Se existir um processo nas filas de mais alta prioridade,
-            este será escolhido. Se as filas estiverem vazias, retorna None."""
+        Se existir um processo nas filas de mais alta prioridade,
+        este será escolhido. Se as filas estiverem vazias, retorna None."""
 
         for item in self.filas:
             if (len(item) != 0):
@@ -76,7 +79,7 @@ class MLFQ(Scheduler):
         do tempo total para boost;"""
 
         if (self.boost - time_spent <= 0):
-            self.boost = self.auxboost
+            self.boost = self._auxboost
             for i in range(1, len(self.filas)):
                 for j in self.filas[i]:
                     j.prio = 0
@@ -85,6 +88,8 @@ class MLFQ(Scheduler):
                 self.filas[i] = []
         else:
             self.boost -= time_spent
+
+    # TODO: Implementar método para processos bloqueados
 
 
 class LOTERIA(Scheduler):
@@ -97,23 +102,39 @@ class LOTERIA(Scheduler):
         super().__init__(vprontos)
         self.name = "escalonadorLOTERIA"
         self.total_tickets = total_tickets
-        self.total_tickets_aux = total_tickets
+        self._total_tickets_aux = total_tickets
+        self._io_blocked_list = []
         self.prontos.sort(key=lambda a: a.prio, reverse=True)
 
-    def pronto(self, Processo):
-        self. prontos.append(Processo)
+    def pronto(self, Processo, io=False, born=False):
+        self.prontos.append(Processo)
         self.prontos.sort(key=lambda a: a.prio, reverse=True)
 
     def proximo(self):
         total = 0
-        number = random.randint(0, self.total_tickets_aux)
+        number = random.randint(0, self._total_tickets_aux)
 
         for i in range(len(self.prontos)):
-            tota += self.prontos[i].bilhetes
+            total += self.prontos[i].bilhetes
             if (number <= total):
                 return self.prontos.pop(i)
 
         return None
+
+    def io_blocked(self):
+        i, lim = 0, len(self._io_blocked_list)
+
+        while (i < lim):
+            self._io_blocked_list[i][1] -= 1
+            if (self._io_blocked_list[i][1] == 0):
+                self.pronto(self._io_blocked_list[i][0], io=True)
+                del self._io_blocked_list[i]
+                lim -= 1
+            else:
+                i += 1
+
+    def io_blocked_add(self, Process, block_time):
+        self._io_blocked_list.append([Process, block_time + 1])
 
 
 class STRIDE(Scheduler):
@@ -126,8 +147,7 @@ class STRIDE(Scheduler):
         super().__init__(vprontos)
         self.name = "escalonadorSTRIDE"
 
-    def pronto(self, Processo):
-
+    def pronto(self, Processo, io=False, born=False):
         Processo.prio += Processo.bilhetes
         heappush(self. prontos, Processo)
 
@@ -137,7 +157,7 @@ class STRIDE(Scheduler):
 
 class FIFO(Scheduler):
     """ Representa um escalonador do tipo FIFO. Recebe uma lista de processos
-    e usa todos os métodos como foram de finidos na classe mãe."""
+    e usa os métodos como foram definidos na classe mãe."""
 
     def __init__(self, vprontos=[]):
         super().__init__(vprontos)
@@ -154,17 +174,14 @@ class SJF(Scheduler):
         self.name = "EscalonadorSJF"
 
     def proximo(self):
-        minIndex = self.getMin()
-        p = self.prontos.pop(minIndex)
-        return p
+        return self.prontos.pop(self.getMin())
 
+    # TODO: Verificar se é possível não achar nenhum processo para retornar
     def getMin(self):
-        minIndex = 0
-        minTam = 0x3f3f3f
+        minIndex, minTam = 0, 0x3f3f3f
         for (idx, item) in enumerate(self.prontos):
-            if (item.tam < minTam):
-                minIndex = idx
-                minTam = item.tam
+            if (item.size < minTam):
+                minIndex, minTam = idx, item.size
 
         return minIndex
 
