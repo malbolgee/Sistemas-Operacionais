@@ -1,2 +1,2 @@
-# escalonador-SO
-Escalonador para a disciplina de Sistemas Operacionais
+# Sistemas Operacionais
+Códigos dos trabalhos da disciplina de Sistemas Operacionais da UFAM.
