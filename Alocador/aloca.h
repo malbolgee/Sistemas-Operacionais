@@ -103,7 +103,7 @@ private:
 	 * procura por um bloco livre deve começar. 
 	 * 
 	*/
-	unsigned ptr_nextfit;
+	size_t ptr_nextfit;
 
 	/**
 	 * 
@@ -174,7 +174,7 @@ private:
 	 * @return Um ponteiro para o começo do bloco alocado.
 	 * 
 	*/
-	char *auxfit(int index, unsigned short tamanho);
+	char *auxfit(size_t index, unsigned short tamanho);
 
 	/**
 	 * 
