@@ -35,6 +35,15 @@ int main(int argc, char **argv)
     else
         printf("p4 não foi :/\n");
 
+    // if (c.verifica(p1, 25) != NULL)
+    //     puts("p1 + 25 está alocado.");
+    // else
+    //     puts("p1 + 25 não está alocado.");
+
+    // if (c.verifica(p1, 16) != NULL)
+    //     puts("p1 + 16 está alocado.");
+    // else
+    //     puts("p1 + 16 não está alocado.");
 
     puts("Endereço de p1:");
     printf("%p\n", p1);
@@ -43,9 +52,7 @@ int main(int argc, char **argv)
     puts("Endereço de p3:");
     printf("%p\n", p3);
 
-    // [<0, 20>, <40, 20>]
-
-    c.libera(p1);
+    // c.libera(p1);
 
     p4 = c.aloca(16);
 
@@ -58,14 +65,6 @@ int main(int argc, char **argv)
     c.libera(p2);
 
     c.imprimeDados();
-
-    // puts("");
-
-    // c.libera(p2);
-    // c.libera(p3);
-
-    // c.imprimeDados();
-
 
     return 0;
 }
