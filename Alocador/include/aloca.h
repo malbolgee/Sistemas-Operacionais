@@ -2,8 +2,6 @@
 #define FIRSTFIT 1
 #define NEXTFIT 2
 
-typedef unsigned short ushort;
-
 /**
  * 
  * Número 'mágico' que indica
@@ -79,8 +77,8 @@ public:
 
 	/**
 	 * 
-	 * Imprime o número de elementos na lista de blocos livres.
-	 * 
+	 * Imprime informações sobre a lista de blocos livres.
+	 *  - O número de blocos livres;
 	 *  - O tamanho do maior bloco livre.
 	 *  - A média dos tamanhos dos blocos livres.
 	 * 
@@ -90,7 +88,6 @@ public:
 	/**
 	 * 
 	 * Destrutor da classe.
-	 * 
 	 * Desaloca a variável memória.
 	 * 
 	*/
@@ -99,7 +96,7 @@ public:
 private:
 	/** 
 	 * 
-	 * Ponteiro que indinca onde a
+	 * Ponteiro que indinca onde a 
 	 * procura por um bloco livre deve começar. 
 	 * 
 	*/
@@ -107,7 +104,7 @@ private:
 
 	/**
 	 * 
-	 * Indica a política de gerenciamento
+	 * Indica a política de gerenciamento 
 	 * de alocação usada pelo alocador;
 	 * 
 	*/
@@ -119,13 +116,13 @@ private:
 	 * 
 	 * Vector que guarda os blocos livres.
 	 * 
-	 * Cada posição guarda um par <char *, ushort>
+	 * Cada posição guarda um par <char *, uint>
 	 * que são, respectivamente, um ponteiro para o 
 	 * começo do bloco livre e o tamanho, em bytes, 
 	 * desse bloco;
 	 *  
 	*/
-	std::vector<std::pair<char *, ushort>> livres;
+	std::vector<std::pair<char *, uint>> livres;
 
 	/**
 	 * 
@@ -165,16 +162,17 @@ private:
 
 	/**
 	 * 
-	 * Função auxiliar usada por bestfit(), nextfit() e firstfit()
-	 * para gerência dos espaços livres e definição 
-	 * dos valores de número mágico e tamanho do bloco alocado.
+	 * Função auxiliar usada por bestfit(), nextfit() e firstfit(). 
+	 * 
+	 * Gerencia os espaços livres e define os valores
+	 * de 'número mágico' e tamanho do bloco alocado.
 	 * 
 	 * @param index É o índice do bloco livre encontrado na lista de blocos livres.
 	 * @param tamanho Tamanho em bytes a ser alocado.
 	 * @return Um ponteiro para o começo do bloco alocado.
 	 * 
 	*/
-	char *auxfit(size_t index, unsigned short tamanho);
+	char *auxfit(size_t index, uint tamanho);
 
 	/**
 	 * 
