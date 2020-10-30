@@ -39,7 +39,7 @@ char *meualoc::bestfit(unsigned short tamanho)
     _tamanho += 4U;
     size_t index = 0UL;
     bool found = false;
-    uint menorTamaho = std::numeric_limits<uint>::max();
+    uint menorTamanho = std::numeric_limits<uint>::max();
 
     for (size_t i = 0UL; i < this->livres.size(); ++i)
     {
@@ -48,8 +48,8 @@ char *meualoc::bestfit(unsigned short tamanho)
         {
 
             found = true;
-            if (this->livres[i].second < menorTamaho)
-                index = i, menorTamaho = this->livres[i].second;
+            if (this->livres[i].second < menorTamanho)
+                index = i, menorTamanho = this->livres[i].second;
         }
     }
 
@@ -100,7 +100,7 @@ char *meualoc::nextfit(unsigned short tamanho)
 char *meualoc::auxfit(size_t index, uint tamanho)
 {
 
-    /**
+    /*
      * 
      * Usa as macros para colocar nos bytes
      * mais significativos do bloco encontrado:
@@ -270,9 +270,6 @@ void meualoc::imprimeDados()
     }
 
     size_t size = this->livres.size();
-    // %ld - Número de blocos não alocados;
-    // %u - Tamanho do maior bloco vazio;
-    // %lf - Média dos tamanhos dos blocos vazios;
     printf("%ld %u %.2lf\n", size, maior, (double)sum / (size ? size : 1));
 }
 
