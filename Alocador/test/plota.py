@@ -4,7 +4,7 @@ import numpy as np
 from typing import List
 
 
-def plotFromFile(yaxis: list, xaxis: List[list], ylabel: str, xlabel: str = "Número de Instruções", title: str = "", filename: str = "file1.png", plot: bool = False) -> None:
+def plotFromFile(yaxis: list, xaxis: List[list], ylabel: str, xlabel: str = "Número de Instruções", title: str = "", filename: str = "file1.png", plot: bool = False, scale: str = "linear") -> None:
 
     plt.figure(figsize=(9.840, 6.160), dpi=300)
 
@@ -12,6 +12,7 @@ def plotFromFile(yaxis: list, xaxis: List[list], ylabel: str, xlabel: str = "Nú
     plt.plot(xaxis, yaxis[1], label="Firstfit")
     plt.plot(xaxis, yaxis[2], label="Nextfit")
 
+    plt.yscale(scale)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
 
