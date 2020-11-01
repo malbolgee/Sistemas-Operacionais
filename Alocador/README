@@ -1,0 +1,14 @@
+Códigos para o Trabalho do Alocador Pessoal na disciplina de Sistemas Operacionais da UFAM - Professor André Carvalho.
+
+Para compilar, basta, em um terminal linux, digitar 'make' dentro do diretório src e um arquivo 'main' executável será gerado.
+Dentro da pasta test há um script em bash para gerar as saídas de acordo com os workloads do diretório workloads. Mas também é possível informar um workload diretamente ao programa para gerar a saída apenas executando './main <WORKLOAD_FILE>', o comportamento padrão é imprimir os resultados na saída padrão, por tanto, é aconselhável redirecionar a saída para um arquivo.
+
+Tavez seja necessário mudar a permissão de execução do script, para isso basta executar o comando 'chmod a+x gerarResultado.sh' e depois executar './gerarResultado.sh'. Os resultados gerados serão colocados dentro do diretório results.
+
+Também há um script para a geração dos gráficos, gerarGraficos.sh, a dinâmica é a mesma do script dos resultados, a única
+diferença é que é necessário informar ao script o workload para gerar os gráficos: 
+'./gerarGraficos <NUMERO_WORKLOAD>', onde NUMERO_WORKLOAD varia de 0-2. As imagens dos gráficos serão
+colocadas no diretório graphs e estarão identificados por nomes sugestivos.
+
+Alguns dos gráficos gerados, com os workloads padrões disponibilizados pelo professor só podem ser visualizados de maneira adequada
+mudando a escala do eixo y para uma escala logarítmica, para isso, será necessário adicionar o parâmetro 'scale="log"' na função 'plotFromFile' dentro de plota.py.

@@ -108,7 +108,12 @@ char *meualoc::auxfit(size_t index, uint tamanho)
      *  - o número mágico.
      *  
     */
-    SET_USED(tamanho, this->livres[index].first)
+
+    //!  TODO: Mudar o tipo da variável de ushort para uint parece não ser mais uma boa ideia.
+    //!  Porque o tamanho já vem somado 0x4, se o tamanho original for exatamente 65535, ao somar
+    //!  0x4, vai para 65539, o que é mais do que um ushort suporta, e, ao tentar definir esse número
+    //!  nos dois bytes disponíveis para ele, vai acontecer um overflow.  
+    SET_USED((ushort)tamanho, this->livres[index].first)
     SET_MAGIC(NUMERO_MAGICO, this->livres[index].first)
 
     char *mem = this->livres[index].first;
@@ -200,10 +205,11 @@ int meualoc::libera(char *ponteiro)
     ushort used = 0;
     TAKE_USED(used, ponteiro)
 
-    SET_USED(0xFFFF, ponteiro - 0x4)
-    SET_MAGIC(0xFFFF, ponteiro - 0x4)
+    ponteiro -= 0x4;
+    RESET_USED(ponteiro)
+    RESET_MAGIC(ponteiro)
 
-    this->livres.push_back(std::make_pair(ponteiro - 0x4, used));
+    this->livres.push_back(std::make_pair(ponteiro, used));
     coalesce();
 
     return 1;
@@ -253,7 +259,7 @@ void meualoc::coalesce()
      * da lista de livres terem mudado de posição. 
      * 
     */
-    ptr_nextfit = 0UL;
+    this->ptr_nextfit = 0UL;
 }
 
 void meualoc::imprimeDados()

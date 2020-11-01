@@ -18,6 +18,14 @@
 	(*(C + 2) |= (X & 0x00FF)); \
 	(*(C + 3) |= ((X & 0xFF00) >> 8));
 
+#define RESET_USED(C)    \
+	((*(C)) &= ~0x00FF); \
+	(*(C + 1) &= ~0x00FF);
+
+#define RESET_MAGIC(C)       \
+	((*(C + 2)) &= ~0x00FF); \
+	(*(C + 3) &= ~0x00FF);
+
 #define TAKE_USED(X, C)           \
 	(X |= ((*(C - 4)) & 0x00FF)); \
 	((X |= ((*(C - 3)) << 8)));
@@ -37,8 +45,6 @@ public:
 	 * 
 	 * @param tamanhoMemoria É a quantidade em bytes de memória a ser alocada;
 	 * @param politicaMem É a política de escolha do bloco livre;
-	 * 
-	 * @note É alocado 10 bytes a mais do que o pedido;
 	 * 
 	*/
 	meualoc(int tamanhoMemoria, int politicaMem);

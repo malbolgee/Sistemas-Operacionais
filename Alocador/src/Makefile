@@ -1,8 +1,13 @@
-IDIR =../include
 CC=g++
+ODIR=../obj
+IDIR=../include
+MKDIR_P= mkdir -p
 CFLAGS=-I -O2 -Wall -Wextra
 
-ODIR=../obj
+all: obj main
+
+obj:
+	${MKDIR_P} ../obj
 
 _DEPS = aloca.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
