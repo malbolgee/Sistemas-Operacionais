@@ -27,12 +27,12 @@ $ ./gerarGraficos <NUMERO_WORKLOAD>
 
 Em que NUMERO_WORKLOAD varia de `[0-2]`. Os gráficos gerados serão colocados no diretório /graphs/ e estarão identificados por nomes sugestivos.
 
-Alguns dos gráficos gerados com os *workloads* padrões disponibilizados pelo professor só podem ser visualizados de maneira adequada mudando a escala do eixo $y$ para uma escalada logarítimica. Para isso, será necessário adicionar o parâmetro `scale=log` na função `plotFromFile(...)` em plota.py.
+Alguns dos gráficos gerados com os *workloads* padrões disponibilizados pelo professor só podem ser visualizados de maneira adequada mudando a escala do eixo ![equation](https://latex.codecogs.com/svg.latex?y) para uma escalada logarítimica. Para isso, será necessário adicionar o parâmetro `scale=log` na função `plotFromFile(...)` em plota.py.
 
-Os Workloads são arquivos de texto cujo conteúdo simula o processo de alocação e desalocação de memória. Um arquivo de *workload* consiste de uma linha com dois inteiros $N$ e $P$, que são, respectivamente, a quantidade de memória total disponível e a política de alocação a ser usada. Logo em seguida, na próxima linha, há um inteiro $T$, que indica a quantidade de linhas que virão.
+Os Workloads são arquivos de texto cujo conteúdo simula o processo de alocação e desalocação de memória. Um arquivo de *workload* consiste de uma linha com dois inteiros ![equation](https://latex.codecogs.com/svg.latex?N) e ![equation](https://latex.codecogs.com/svg.latex?P), que são, respectivamente, a quantidade de memória total disponível e a política de alocação a ser usada. Logo em seguida, na próxima linha, há um inteiro ![equation](https://latex.codecogs.com/svg.latex?T), que indica a quantidade de linhas que virão.
 
-Cada linha é identificada por um caracter $C$, que indica a operação a ser realizada. Se $C$ é 'A', então a operação é uma alocação e a linha vai ter mais dois inteiros, $U$ e $L$, que indicam, respectivamente o $id$ da memória alocada e o tamanho em *bytes* dessa memória.
+Cada linha é identificada por um caracter ![equation](https://latex.codecogs.com/svg.latex?N), que indica a operação a ser realizada. Se ![equation](https://latex.codecogs.com/svg.latex?C) é 'A', então a operação é uma alocação e a linha vai ter mais dois inteiros, ![equation](https://latex.codecogs.com/svg.latex?U) e ![equation](https://latex.codecogs.com/svg.latex?L), que indicam, respectivamente o ![equation](https://latex.codecogs.com/svg.latex?id) da memória alocada e o tamanho em *bytes* dessa memória.
 
-Se $C$ é  'S', então a operação é de desalocação e a linha vai conter apeas o $id$ de um bloco de memória alocado(ou não) previamente.
+Se ![equation](https://latex.codecogs.com/svg.latex?C) é  'S', então a operação é de desalocação e a linha vai conter apeas o ![equation](https://latex.codecogs.com/svg.latex?id) de um bloco de memória alocado(ou não) previamente.
 
 Os nomes dos arquivos de *workload* tem o padrão 'wxpol' em que o '*x'* é o número do *workload* e '*pol*' é a política a ser empregada. Por tanto, um exemplo de nome para um arquivo de *workload* seria: w0bft, indicando que é o *workload* 0 usando a política *bestfit*.
