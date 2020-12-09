@@ -1,13 +1,8 @@
-#include "lista.h"
-#include "eclnr.h"
-#include <errno.h>
-#include <err.h>
-#include <unistd.h>
-#include <error.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "../include/utils.h"
+#include "../include/lista.h"
 
-/* Inicializa uma lista vazia. */
 void lista_init(lista_t *lista)
 {
 
@@ -15,21 +10,13 @@ void lista_init(lista_t *lista)
     lista->last = NULL;
 }
 
-/* Adiciona um elemento no final da lista. */
-void lista_push(lista_t *lista, const process_t process)
+void lista_push(lista_t *lista, process_t *process)
 {
 
     lista_node *node;
-
-    printf("Process Name: %s\n", process.nome);
+    printf("Process Name: %s\n", process->nome);
     node = (lista_node *)malloc(sizeof(lista_node));
-
-    if (!node)
-    {
-
-        perror("Error");
-        exit(errno);
-    }
+    alloc_check(node, "Falha em alocar nó da lista");
 
     if (lista->first)
         lista->last->next = node;
@@ -42,13 +29,10 @@ void lista_push(lista_t *lista, const process_t process)
     node->processo = process;
 }
 
-/* Retira o primeiro elemento da lista. No sucesso retorna um objeto PROCESS_T
-com infos de um processo na lista. Em falha, retorna um objeto PROCESS_T vazio. */
-process_t lista_pop_front(lista_t *lista)
+process_t *lista_pop_front(lista_t *lista)
 {
 
-    lista_node *node;
-    process_t return_ = {0};
+    process_t *return_ = NULL;
 
     if (lista->first)
     {
@@ -57,52 +41,43 @@ process_t lista_pop_front(lista_t *lista)
         {
 
             return_ = lista->first->processo;
-            node = lista->first;
             lista->first = lista->first->next;
-            free(node);
             return return_;
         }
         else
         {
 
             return_ = lista->first->processo;
-            node = lista->first;
             lista->first = lista->last = NULL;
-            free(node);
             return return_;
         }
     }
 
-    return return_;
+    return NULL;
 }
 
-/* Retira o elemento no índice INDEX da LISTA e retorna um objeto PROCESS_T
-com informações sobre esse processo. Se o índice não existir na lista,
-retorna uma objeto PROCRESS_T vazio. */
-process_t lista_pop(lista_t *lista, const size_t index)
+process_t *lista_pop(lista_t *lista, const size_t index)
 {
 
-    process_t return_ = {0};
+    process_t *return_ = NULL;
     lista_node *node, *previus;
     node = lista->first;
 
     if (lista == NULL)
-        return return_;
+        return NULL;
 
     if (lista->size <= index)
-        return return_;
+        return NULL;
 
-    size_t i = 0;
-
+    size_t i = 0UL;
     if (node)
     {
 
-        if (index == 0)
+        if (index == 0UL)
         {
 
             return_ = node->processo;
             lista->first = lista->first->next;
-            free(node);
             return return_;
         }
 
@@ -118,7 +93,6 @@ process_t lista_pop(lista_t *lista, const size_t index)
 
                 return_ = node->processo;
                 previus->next = node->next;
-                free(node);
                 return return_;
             }
 
@@ -128,30 +102,24 @@ process_t lista_pop(lista_t *lista, const size_t index)
         }
     }
 
-    return return_;
+    return NULL;
 }
 
-/* Retorna o índice do menor elemento de LISTA. Menor elemento
-significa o processo com o menor tamanho (tempo de execuçução). */
-unsigned lista_min(const lista_t *lista)
+size_t lista_min(const lista_t *lista)
 {
 
-    unsigned i = 0;
-    unsigned minIndex = 0;
-    lista_node *node;
-    unsigned minTam = 0x3f3f3f;
+    size_t i = 0;
+    size_t minSize = 0;
+    size_t minIndex = 0;
+    lista_node *node = NULL;
 
     node = lista->first;
 
     while (node)
     {
 
-        if (node->processo.tam < minTam)
-        {
-
-            minIndex = i;
-            minTam = node->processo.tam;
-        }
+        if (node->processo->tam < minSize)
+            minSize = node->processo->tam, minIndex = i;
 
         ++i;
         node = node->next;
@@ -160,25 +128,22 @@ unsigned lista_min(const lista_t *lista)
     return minIndex;
 }
 
-/* Verifica se a LISTA está vazia. */
 bool lista_is_empty(const lista_t *lista)
 {
 
     return (lista->first == NULL);
 }
 
-/* Retorna um objeto PROCESS_T que está no início de LISTA. */
-process_t lista_front(const lista_t *lista)
+process_t *lista_front(const lista_t *lista)
 {
 
     return lista->first->processo;
 }
 
-/* Libera LISTA da memória. */
 void lista_free(lista_t *lista)
 {
 
-    lista_node *previus;
+    lista_node *previus = NULL;
     lista_node *node = lista->first;
 
     while (node)
